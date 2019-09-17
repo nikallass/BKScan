@@ -7,7 +7,7 @@
 usage()
 {
     echo "Usage:"
-    echo "./bkscan.sh -t <target_ip> [-P <target_port>] [-u <user>] [-p <password>] [--debug]"
+    echo "./bkscan.sh -t <target_ip> [-P <target_port>] [-u <user>] [-p <password>] [-d <:DISPLAY>] [--debug]"
     exit
 }
 
@@ -42,7 +42,11 @@ do
         TARGET_PORT="$2"
         shift # past argument
         ;;
-        -d|--debug)
+        -d)
+        DISPL_NUM="$2"
+        shift # past argument
+        ;;
+	--debug)
         DEBUG=/log-level:TRACE
         ;;
         *)
@@ -62,11 +66,23 @@ fi
 
 echo [+] Targeting ${TARGET_IP}:${TARGET_PORT}...
 
+if [[ -z $DISPLAY && -z $DISPL_NUM ]]
+then
+    DISPL_NUM=:0
+else
+    if [[ -z $DISPL_NUM ]]
+    then
+        DISPL_NUM=$DISPLAY
+    fi
+fi
+
+
+
 if [[ ! -z $RDP_USER && ! -z $RDP_PASSWORD ]]
 then
     echo [+] Using provided credentials, will support NLA
     docker run -it --rm --privileged \
-      -e DISPLAY=$DISPLAY \
+      -e DISPLAY=$DISPL_NUM \
       -v /tmp/.X11-unix:/tmp/.X11-unix \
       --user=$USER \
       bkscan \
@@ -74,7 +90,7 @@ then
 else
     echo [+] No credential provided, won\'t support NLA
     docker run -it --rm --privileged \
-      -e DISPLAY=$DISPLAY \
+      -e DISPLAY=$DISPL_NUM \
       -v /tmp/.X11-unix:/tmp/.X11-unix \
       --user=$USER \
       bkscan \
