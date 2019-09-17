@@ -68,6 +68,7 @@ then
     docker run -it --rm --privileged \
       -e DISPLAY=$DISPLAY \
       -v /tmp/.X11-unix:/tmp/.X11-unix \
+      --user=$USER \
       bkscan \
       xfreerdp /cve-2019-0708 /cert-ignore /v:${TARGET_IP}:${TARGET_PORT} /u:${RDP_USER} /p:${RDP_PASSWORD} ${DEBUG}
 else
@@ -75,6 +76,7 @@ else
     docker run -it --rm --privileged \
       -e DISPLAY=$DISPLAY \
       -v /tmp/.X11-unix:/tmp/.X11-unix \
+      --user=$USER \
       bkscan \
       xfreerdp /cve-2019-0708 /cert-ignore /v:${TARGET_IP}:${TARGET_PORT} ${DEBUG}
 fi
